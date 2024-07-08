@@ -30,34 +30,12 @@ void addStudent(int id, char* name) {
     printf("Student added successfully.\n");
 }
 
-void markAttendance(int id, int present) {
+void deleteStudent(int id) {
+    int found = 0;
     for (int i = 0; i < studentCount; i++) {
         if (students[i].id == id) {
-            attendance[i].studentId = id;
-            attendance[i].present = present;
-            printf("Attendance marked successfully.\n");
-            return;
-        }
-    }
-    printf("Student not found.\n");
-}
-
-void displayAttendance() {
-    printf("ID\tName\t\tAttendance\n");
-    printf("-----------------------------------\n");
-    for (int i = 0; i < studentCount; i++) {
-        printf("%d\t%s\t\t%s\n", students[i].id, students[i].name, attendance[i].present ? "Present" : "Absent");
-    }
-}
-
-int main() {
-    addStudent(1, "John Doe");
-    addStudent(2, "Jane Smith");
-
-    markAttendance(1, 1); // John Doe is present
-    markAttendance(2, 0); // Jane Smith is absent
-
-    displayAttendance();
-
-    return 0;
-}
+            found = 1;
+            for (int j = i; j < studentCount - 1; j++) {
+                students[j] = students[j + 1];
+                attendance[j] = attendance[j + 1];
+            }
