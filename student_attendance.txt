@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STUDENTS 100
+#define MAX_NAME_LENGTH 50
+
+typedef struct {
+    int id;
+    char name[MAX_NAME_LENGTH];
+} Student;
+
+typedef struct {
+    int studentId;
+    int present; // 1 for present, 0 for absent
+} AttendanceRecord;
+
+Student students[MAX_STUDENTS];
+AttendanceRecord attendance[MAX_STUDENTS];
+int studentCount = 0;
+
+void addStudent(int id, char* name) {
+    if (studentCount >= MAX_STUDENTS) {
+        printf("Maximum student limit reached.\n");
+        return;
+    }
+    students[studentCount].id = id;
+    strcpy(students[studentCount].name, name);
+    studentCount++;
+    printf("Student added successfully.\n");
+}
+
+void markAttendance(int id, int present) {
+    for (int i = 0; i < studentCount; i++) {
+        if (students[i].id == id) {
+            attendance[i].studentId = id;
+            attendance[i].present = present;
+            printf("Attendance marked successfully.\n");
+            return;
+        }
+    }
+    printf("Student not found.\n");
+}
+
+void displayAttendance() {
+    printf("ID\tName\t\tAttendance\n");
+    printf("-----------------------------------\n");
+    for (int i = 0; i < studentCount; i++) {
+        printf("%d\t%s\t\t%s\n", students[i].id, students[i].name, attendance[i].present ? "Present" : "Absent");
+    }
+}
+
+int main() {
+    addStudent(1, "John Doe");
+    addStudent(2, "Jane Smith");
+
+    markAttendance(1, 1); // John Doe is present
+    markAttendance(2, 0); // Jane Smith is absent
+
+    displayAttendance();
+
+    return 0;
+}
