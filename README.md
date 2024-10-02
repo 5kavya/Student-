@@ -1,1 +1,1 @@
-A studentregistrayion form using c language
+A student attendence form using c language
