@@ -2,70 +2,96 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_STUDENTS 100
 #define MAX_NAME_LENGTH 50
 
-typedef struct {
+// Define a structure for student nodes
+typedef struct Student {
     int id;
     char name[MAX_NAME_LENGTH];
+    int present; // 1 for present, 0 for absent
+    struct Student* next; // Pointer to the next student node
 } Student;
 
-typedef struct {
-    int studentId;
-    int present; // 1 for present, 0 for absent
-} AttendanceRecord;
+Student* head = NULL; // Head of the linked list
 
-Student students[MAX_STUDENTS];
-AttendanceRecord attendance[MAX_STUDENTS];
-int studentCount = 0;
-
+// Function to add a student
 void addStudent(int id, char* name) {
-    if (studentCount >= MAX_STUDENTS) {
-        printf("Maximum student limit reached.\n");
-        return;
+    // Check if the student ID already exists
+    Student* temp = head;
+    while (temp != NULL) {
+        if (temp->id == id) {
+            printf("Student ID already exists.\n");
+            return;
+        }
+        temp = temp->next;
     }
-    students[studentCount].id = id;
-    strcpy(students[studentCount].name, name);
-    studentCount++;
+
+    // Create a new student node
+    Student* newStudent = (Student*)malloc(sizeof(Student));
+    newStudent->id = id;
+    strcpy(newStudent->name, name);
+    newStudent->present = 0; // Default attendance is absent
+    newStudent->next = head; // Add the new student at the beginning of the list
+    head = newStudent;
+
     printf("Student added successfully.\n");
 }
 
+// Function to delete a student
 void deleteStudent(int id) {
-    int found = 0;
-    for (int i = 0; i < studentCount; i++) {
-        if (students[i].id == id) {
-            found = 1;
-            for (int j = i; j < studentCount - 1; j++) {
-                students[j] = students[j + 1];
-                attendance[j] = attendance[j + 1];
-            }
-            studentCount--;
-            printf("Student deleted successfully.\n");
-            break;
-        }
+    Student *temp = head, *prev = NULL;
+
+    // Search for the student node
+    while (temp != NULL && temp->id != id) {
+        prev = temp;
+        temp = temp->next;
     }
-    if (!found) {
+
+    if (temp == NULL) {
         printf("Student not found.\n");
+        return;
     }
+
+    // Remove the student node
+    if (prev == NULL) {
+        head = temp->next; // If the student is the head of the list
+    } else {
+        prev->next = temp->next;
+    }
+    free(temp);
+    printf("Student deleted successfully.\n");
 }
 
+// Function to mark attendance
 void markAttendance(int id, int present) {
-    for (int i = 0; i < studentCount; i++) {
-        if (students[i].id == id) {
-            attendance[i].studentId = id;
-            attendance[i].present = present;
+    Student* temp = head;
+
+    // Search for the student node
+    while (temp != NULL) {
+        if (temp->id == id) {
+            temp->present = present; // Update the attendance
             printf("Attendance marked successfully.\n");
             return;
         }
+        temp = temp->next;
     }
     printf("Student not found.\n");
 }
 
+// Function to display attendance
 void displayAttendance() {
+    Student* temp = head;
+
+    if (temp == NULL) {
+        printf("No students found.\n");
+        return;
+    }
+
     printf("ID\tName\t\tAttendance\n");
     printf("-----------------------------------\n");
-    for (int i = 0; i < studentCount; i++) {
-        printf("%d\t%s\t\t%s\n", students[i].id, students[i].name, attendance[i].present ? "Present" : "Absent");
+    while (temp != NULL) {
+        printf("%d\t%s\t\t%s\n", temp->id, temp->name, temp->present ? "Present" : "Absent");
+        temp = temp->next;
     }
 }
 
